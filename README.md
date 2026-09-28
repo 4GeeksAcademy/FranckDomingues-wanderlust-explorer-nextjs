@@ -45,7 +45,7 @@ src/
 
 See [SPECS.md](./SPECS.md) for the current project scope and foundation details.
 
-## Design discovery
+## Design References
 
 These travel and discovery references informed general principles only; Wanderlust Explorer will have its own visual identity:
 
@@ -63,4 +63,4 @@ The current deterministic local collection contains 100 experience records and c
 npm run validate:data
 ```
 
-The official assignment document was not present in the workspace during this architecture block. The record count and domain fields are therefore an explicit project foundation choice pending confirmation against that source.
+See [SPECS.md](./SPECS.md) for the official assignment requirements matrix and current completion status.

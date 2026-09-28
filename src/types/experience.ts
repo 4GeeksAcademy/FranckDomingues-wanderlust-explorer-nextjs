@@ -2,8 +2,8 @@ export const EXPERIENCE_CATEGORIES = [
   "Adventure",
   "Culture",
   "Food",
+  "Wellness",
   "Nature",
-  "Relaxation",
 ] as const;
 
 export type ExperienceCategory = (typeof EXPERIENCE_CATEGORIES)[number];
@@ -25,7 +25,7 @@ export interface Experience {
   /** Short, useful summary of what a traveler can expect. */
   description: string;
   /** Stable, directly usable image URL; no runtime image API is required. */
-  image: string;
+  imageUrl: string;
   /** Accessible description of the image subject. */
   imageAlt: string;
   /** Typical activity duration in hours. */

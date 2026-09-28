@@ -17,9 +17,10 @@ for (const [index, experience] of experiences.entries()) {
   for (const [field, value] of Object.entries({
     id: experience.id,
     title: experience.title,
+    category: experience.category,
     destination: experience.destination,
     description: experience.description,
-    image: experience.image,
+    imageUrl: experience.imageUrl,
     imageAlt: experience.imageAlt,
   })) {
     if (typeof value !== "string" || value.trim().length === 0) {
@@ -30,6 +31,10 @@ for (const [index, experience] of experiences.entries()) {
   if (!EXPERIENCE_CATEGORIES.includes(experience.category)) {
     errors.push(`${label}: unsupported category "${experience.category}".`);
   }
+  const destinationParts = experience.destination.split(",").map((part) => part.trim());
+  if (destinationParts.length < 2 || destinationParts.some((part) => part.length === 0)) {
+    errors.push(`${label}: destination must include non-empty city and country values.`);
+  }
   if (!Number.isFinite(experience.price) || experience.price <= 0) {
     errors.push(`${label}: price must be a positive finite number.`);
   }
@@ -39,8 +44,8 @@ for (const [index, experience] of experiences.entries()) {
   if (!Number.isFinite(experience.durationHours) || experience.durationHours <= 0) {
     errors.push(`${label}: durationHours must be a positive finite number.`);
   }
-  if (!/^https:\/\/images\.unsplash\.com\/[\w-]+\?/.test(experience.image)) {
-    errors.push(`${label}: image must be a usable HTTPS Unsplash image URL.`);
+  if (!/^https:\/\/images\.unsplash\.com\/[\w-]+\?/.test(experience.imageUrl)) {
+    errors.push(`${label}: imageUrl must be a usable HTTPS Unsplash image URL.`);
   }
 }
 
