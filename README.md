@@ -43,7 +43,7 @@ src/
 └── types/
 ```
 
-See [SPECS.md](./SPECS.md) for the current project scope and foundation details.
+See [SPECS.md](./SPECS.md) for the current project scope and foundation details. Visual QA evidence, including responsive screenshots and their manifest, is available in [docs/qa](./docs/qa/).
 
 ## Design References
 
@@ -64,5 +64,7 @@ npm run validate:data
 ```
 
 See [SPECS.md](./SPECS.md) for the official assignment requirements matrix and current completion status.
+
+Run `npm run validate:data`, `npm run lint`, `npm run typecheck`, and `npm run build` before delivery. Responsive screenshot evidence is documented in `docs/qa/`; see its README for coverage and limitations.
 
 Favorites are intentionally not persisted and reset on a full page refresh. See `SPECS.md` for the state architecture and behavior contracts.
