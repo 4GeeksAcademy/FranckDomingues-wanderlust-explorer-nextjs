@@ -2,17 +2,17 @@
 
 ## Project objective
 
-Wanderlust Explorer is a travel discovery application intended to help people explore a curated local collection of 100 experiences, search by experience title, filter by category and destination, view experience details, save favorites, and visit a simulated user profile with a saved-favorites count. The core Explorer, shared favorites behavior, and primary route experiences are interactive. Supplied screenshot evidence documents responsive layouts at mobile, tablet, and desktop sizes; interactive browser QA and final polish remain future work.
+Wanderlust Explorer is a travel discovery application intended to help people explore a curated local collection of 100 experiences, search by experience title, filter by category and destination, view experience details, save favorites, and visit a simulated user profile with a saved-favorites count. The Explorer, shared favorites behavior, and primary routes are implemented. Responsive screenshot evidence has received human visual review across representative desktop, tablet/iPad-sized, and mobile/iPhone-sized captures. Browser automation and exhaustive accessibility testing were not performed.
 
 ## Design discovery and visual direction
 
 References were reviewed as sources of general interaction principles, not templates to reproduce:
 
 - **Airbnb Experiences** — <https://www.airbnb.com/s/experiences>. Studied activity discovery, category-led browsing, and editorial photography. Influence: clear experience titles, strong place imagery, and scannable discovery entry points.
-- **GetYourGuide** — <https://www.getyourguide.com/>. Selected as a search-first trip discovery reference for experience summaries and refinement patterns. Influence: make search and category/destination refinement easy to find when those controls are implemented. Its public page was not fully inspectable during this block, so revisit it during visual design before treating any specific pattern as verified.
+- **GetYourGuide** — <https://www.getyourguide.com/>. Selected as a search-first trip discovery reference for experience summaries and refinement patterns. Influence: make search and category/destination refinement easy to find when those controls are implemented. Its public page was not fully inspectable during initial design discovery; no specific unverified pattern is treated as a required design behavior.
 - **National Geographic Expeditions** — <https://www.nationalgeographic.com/expeditions/>. Studied destination storytelling, landscape imagery, and visual hierarchy. Influence: favor sense of place and useful context over dense promotional decoration.
 
-**Wanderlust direction:** calm, welcoming, editorial travel discovery; warm off-white canvas with dark ink and restrained evergreen accents; generous consistent spacing; clear heading/body hierarchy; rounded but not overly pill-shaped cards; large, destination-led image crops with meaningful alt text; compact persistent navigation; filters that can become a clear toolbar or mobile disclosure; responsive layouts that preserve content priority rather than merely shrink desktop UI. These are guiding principles, not a final design system.
+**Wanderlust direction:** calm, welcoming, editorial travel discovery; warm off-white canvas with dark ink and restrained evergreen accents; generous consistent spacing; clear heading/body hierarchy; rounded but not overly pill-shaped cards; large, destination-led image crops with meaningful alt text; compact persistent navigation; filters that can become a clear toolbar or mobile disclosure; responsive layouts that preserve content priority rather than merely shrink desktop UI. These are guiding principles for the implemented interface, not a formal design system.
 
 ## Technical foundation
 
@@ -100,13 +100,13 @@ Compose active search, category, and destination constraints with logical AND; e
 - **Mobile:** responsive wrapping navigation, content-first single-column experience cards, manageable image/copy sequence, filters available in a stacked labeled control panel, touch targets that are comfortably operable.
 - **Tablet:** use available width for balanced multi-column discovery where content warrants it; avoid cramped filters.
 - **Desktop:** centered maximum-width content, multi-column experience presentation when implemented, persistent clear navigation, filters visible where useful.
-- Preserve logical reading and keyboard order at all breakpoints. Detailed breakpoints and final polish remain future work.
+- Preserve logical reading and keyboard order at all breakpoints. Implemented responsive layouts are represented in the supplied captures and have received human visual review; exhaustive keyboard and accessibility testing is not claimed.
 
 ### Visual QA evidence
 
 The supplied visual QA package is preserved in [`docs/qa/`](./docs/qa/), including the original package README, manifest, and 15 PNG captures. The captures cover Home (desktop/tablet/mobile), Explorer filters and cards (mobile/tablet/desktop), Favorites (desktop/tablet/mobile), experience detail (desktop/tablet/mobile), and Profile (desktop). The recorded image dimensions range from 496 px to 1,731 px wide. The supplied evidence package reports that these were manually captured from the running Block 3 app; original filenames, manifest, and package notes are retained.
 
-The evidence package describes responsive reflow and legible, coherent route layouts in the captures. During this review, PNG integrity/dimensions and representative Unsplash image endpoints were checked. An independent pixel-level rendering review and viewport replay could not be performed: screenshot vision is unavailable in this session and no browser binary is installed. The captures are supplied evidence, not independently visually verified, and are not proof of keyboard accessibility or behavioral transitions. REQ-036 remains PARTIAL pending independent human/browser visual confirmation and viewport checks.
+Human visual QA has been completed outside the coding-agent environment. The reviewer confirmed representative responsive rendering across desktop, tablet/iPad-sized, and mobile/iPhone-sized captures for Home, Explorer, Favorites, Experience Detail, and Profile. Within this coding session, PNG integrity/dimensions and representative Unsplash image endpoints were checked, and functional/data behavior was verified through code-level assertions and local HTTP/SSR checks. Screenshot pixels and viewport behavior could not be independently replayed in the agent environment because no browser was available. Browser automation was not performed. Human visual QA supports responsive presentation; it does not constitute exhaustive keyboard, screen-reader, or accessibility testing.
 
 ## Accessibility baseline
 
@@ -118,7 +118,7 @@ Unless an official assignment document later requires otherwise, this project do
 
 ## Scope of this block
 
-Implemented now: project contract, visual direction, canonical type, local dataset and validation, shared favorites owner, active navigation, interactive Explorer/search/filters/URL synchronization, cards, home hero, detail, Favorites, simulated Profile, and supplied responsive screenshot evidence. Remaining: full interactive browser/keyboard QA, independent pixel-level visual review/polish, and any requirements beyond the 36-item checklist.
+Implemented: canonical type and validated local dataset, shared in-memory favorites, active navigation, interactive Explorer/search/filters/URL synchronization, cards, home, dynamic detail/not-found, Favorites, simulated Profile, and responsive layouts. Human visual QA of representative responsive screenshots is complete. Browser automation, exhaustive browser interaction/keyboard testing, and exhaustive accessibility testing remain outside the verified scope.
 
 ## Official Assignment Requirements
 
@@ -161,11 +161,11 @@ Statuses apply to the repository as of this audit: **DONE** is verified, **PARTI
 | REQ-033 | Show Navbar on every route and style active links with `usePathname`. | DONE |
 | REQ-034 | Show `No se encontraron resultados` for zero results. | DONE |
 | REQ-035 | Demonstrate meaningful `useState`, correct `useEffect`, and custom hook. | DONE |
-| REQ-036 | Deliver coherent responsive mobile, tablet, and desktop behavior across pages, including touch-friendly controls. | PARTIAL |
+| REQ-036 | Deliver coherent responsive mobile, tablet, and desktop behavior across pages, including touch-friendly controls. | DONE |
 
 ## Definition of Done
 
-For the interactive implementation block, done means the 36-item matrix is updated from observed behavior; all routes and core search/filter/favorites functionality work with the canonical data; no prohibited state/persistence dependency is introduced; and dataset validation, lint, typecheck, production build, functional behavior checks, and responsive screenshot evidence are recorded. REQ-036 remains partial until responsive presentation is independently confirmed. Full interactive browser/keyboard QA and independent pixel-level review remain follow-up work and are not verified by the supplied screenshots.
+For the interactive implementation block, done means the 36-item matrix is updated from observed behavior; all routes and core search/filter/favorites functionality work with the canonical data; no prohibited state/persistence dependency is introduced; and dataset validation, lint, typecheck, production build, functional behavior checks, and responsive screenshot evidence are recorded. REQ-036 is DONE based on implementation review and completed human visual review of representative responsive screenshots. Browser automation was not performed; exhaustive accessibility and keyboard testing remain separate follow-up considerations.
 
 ## Local development and checks
 

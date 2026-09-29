@@ -1,70 +1,40 @@
 # Wanderlust Explorer
 
-A travel exploration project built with Next.js, React, TypeScript, and Tailwind CSS. Explore a curated local collection of 100 experiences, search and filter by title/category/destination, open detailed pages, and save favorites in shared in-memory React state.
+A responsive travel-discovery app for browsing a curated collection of 100 local experiences. Search by title, filter by category and destination, open experience details, and save favorites across the app.
 
-## Tech stack
+## Technology
 
-- Next.js App Router
-- React
-- TypeScript
-- Tailwind CSS v4
-- ESLint
-- npm
+Next.js App Router, React 19, TypeScript, Tailwind CSS v4, ESLint, and npm. Experience data is local and deterministic; favorites use shared in-memory React state and reset on a full refresh.
 
-## Getting started
-
-Install dependencies and start the development server:
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the app.
+Open [http://localhost:3000](http://localhost:3000). Useful checks: `npm run validate:data`, `npm run lint`, `npm run typecheck`, and `npm run build`.
 
-## Available scripts
+## Routes and interactions
 
-```bash
-npm run dev        # Start the development server
-npm run lint       # Run ESLint
-npm run typecheck  # Check TypeScript types
-npm run build      # Build for production
-npm start          # Start the production server
-```
+- `/` — introduction and link to experience discovery.
+- `/experiences` — browse all experiences; title search uses case-insensitive regular expressions, and category and destination filters can be combined and shared in the URL.
+- `/experiences/[id]` — experience details and a favorite action; unknown IDs show not found.
+- `/favorites` — shared saved experiences.
+- `/profile` — simulated profile with the shared favorites count.
 
-## Source layout
+The navigation shows the active route and favorites count. Search, filters, cards, and favorite controls are keyboard-labeled and responsive. Favorites are not persisted across a full-page refresh.
 
-```text
-src/
-├── app/
-├── components/
-├── data/
-├── hooks/
-└── types/
-```
+## Design references
 
-See [SPECS.md](./SPECS.md) for the current project scope and foundation details. Visual QA evidence, including responsive screenshots and their manifest, is available in [docs/qa](./docs/qa/).
+These references informed general discovery and visual principles rather than being reproduced as templates:
 
-## Design References
+- [Airbnb Experiences](https://www.airbnb.com/s/experiences) — category-led browsing and editorial activity imagery.
+- [GetYourGuide](https://www.getyourguide.com/) — search-first discovery and refinement patterns.
+- [National Geographic Expeditions](https://www.nationalgeographic.com/expeditions/) — destination storytelling and landscape hierarchy.
 
-These travel and discovery references informed general principles only; Wanderlust Explorer will have its own visual identity:
+The visual direction is calm and editorial, with warm surfaces, evergreen accents, clear hierarchy, and destination-led imagery.
 
-- [Airbnb Experiences](https://www.airbnb.com/s/experiences) — studied category-led browsing and editorial activity imagery; informs scannable discovery and strong sense of place.
-- [GetYourGuide](https://www.getyourguide.com/) — studied search-first discovery and refinement patterns; informs making future search and filters easy to locate.
-- [National Geographic Expeditions](https://www.nationalgeographic.com/expeditions/) — studied destination storytelling and landscape hierarchy; informs contextual, destination-led presentation.
+## QA and evidence
 
-The intended direction is calm and editorial: warm off-white surfaces, dark text with restrained evergreen accents, generous spacing, clear type hierarchy, rounded-but-subtle cards, and useful large images. Navigation stays clear, future filters adapt to mobile, and layouts prioritize content across screen sizes rather than simply shrinking desktop UI. See `SPECS.md` for architecture and the scope boundary.
-
-## Data validation
-
-The current deterministic local collection contains 100 experience records and can be checked with:
-
-```bash
-npm run validate:data
-```
-
-See [SPECS.md](./SPECS.md) for the official assignment requirements matrix and current completion status.
-
-Run `npm run validate:data`, `npm run lint`, `npm run typecheck`, and `npm run build` before delivery. Responsive screenshot evidence is documented in `docs/qa/`; see its README for coverage and limitations.
-
-Favorites are intentionally not persisted and reset on a full page refresh. See `SPECS.md` for the state architecture and behavior contracts.
+Responsive screenshots, the source evidence notes, manifest, and final QA report are in [`docs/qa/`](./docs/qa/). The report distinguishes code/HTTP checks, the coding environment’s browser limitations, and completed human visual review. See [`SPECS.md`](./SPECS.md) for the implementation contract and 36-item requirements matrix.

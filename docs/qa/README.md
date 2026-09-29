@@ -16,11 +16,13 @@ The supplied package identifies the baseline as Block 3 and reports that screens
 - Profile: desktop
 - Shared favorites count visible across relevant views
 
-## Supplied visual QA observations
+## Human visual QA
 
-The supplied evidence shows responsive reflow across desktop, iPad-sized, and iPhone-sized viewports. Navigation, cards, filters, detail content, Favorites, and Profile remain legible and structurally coherent in the captured states.
+Human review outside the coding-agent environment is complete. It confirmed representative responsive rendering at desktop, tablet/iPad-sized, and mobile/iPhone-sized viewports for Home, Explorer, Favorites, Experience Detail, and Profile. The supplied observations describe navigation, cards, filters, detail content, Favorites, and Profile as legible and structurally coherent in the reviewed captures. This supports responsive presentation; it is not an exhaustive audit of every page state or accessibility criterion.
 
-This evidence does not by itself prove every behavioral requirement such as regex behavior, malformed-regex handling, URL synchronization, keyboard interaction, or every favorite-toggle transition. Those behaviors should remain part of the final functional QA checklist.
+## Automated and code-level verification
+
+The coding session verified PNG integrity/dimensions, representative image endpoints, data and pure filtering behavior, and local HTTP/SSR route/query cases as recorded below. Browser automation was not performed. No browser executable or Playwright/Puppeteer setup was available in the coding-agent environment, so screenshots were not pixel-reviewed or replayed at their viewports there. Human visual review is reported separately from these automated/code-level checks.
 
 ## Additional review in this workspace
 
@@ -29,17 +31,16 @@ This evidence does not by itself prove every behavioral requirement such as rege
 - Live HTTP/SSR checks passed for `/`, `/experiences`, `/favorites`, and `/profile`; Explorer markup contains 100 distinct detail links; a known detail returns 200 and an unknown ID returns 404.
 - A deep-link query combining Tokyo search, uppercase `FOOD`, country destination Japan, and an unknown query key rendered the expected sole record. Invalid regex input safely returned the expected zero-results markup. Country-destination routing returned 200.
 - Assertions against the pure filtering function passed for all 100 records, case-insensitive and regex title search, malformed regex, independent category and country filters, combined AND filters, no-match results, and source-data non-mutation.
-- Dataset validation, lint, typecheck, production build, and `git diff --check` passed after the documentation/evidence updates.
+- Dataset validation, lint, typecheck, production build, and Git whitespace checks passed during final closure validation.
 
-Independent visual inspection and actual viewport/click replay could not be completed: the available image-view tool did not expose screenshot pixels for assessment, and no browser binary or Playwright/Puppeteer installation is available. Thus layout-quality observations above are attributed to the supplied package, not claimed as independent pixel-level findings.
+## Verification boundaries and remaining checks
 
-## Remaining manual checks
+- Human visual QA of representative responsive captures is complete as described above.
+- Browser automation was not performed. Coding-agent limitations prevented an independent screenshot-pixel review and viewport replay in that environment.
+- Browser interaction for heart toggles across route navigation, Clear filters, and control-driven URL/history behavior was not replayed end-to-end in a browser.
+- Keyboard-only focus order, visible focus in a real browser, screen-reader announcements, and exhaustive accessibility testing remain unverified.
 
-- Browser interaction for heart toggles and favorite consistency across route navigation; Clear filters and control-driven URL updates/history behavior.
-- Keyboard-only focus order, visible focus behavior in a real browser, and screen-reader announcements.
-- Actual browser viewport inspection for horizontal overflow, touch-target dimensions, and browser-specific rendering across mobile/tablet/desktop.
-
-REQ-036 remains **PARTIAL** in `SPECS.md`: the supplied multi-page, multi-breakpoint package is preserved, but the screenshots could not be independently pixel-reviewed or replayed at their viewports in this workspace. A human/browser visual confirmation is still needed before marking responsive presentation DONE. Interactive browser/keyboard checks above also remain unverified follow-up QA.
+REQ-036 is **DONE** in `SPECS.md` based on the responsive implementation and completed human visual review. This status does not imply automated viewport testing, browser automation, or exhaustive accessibility verification.
 
 ## Files
 
