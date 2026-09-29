@@ -1,6 +1,6 @@
 # Wanderlust Explorer
 
-A travel exploration project built with Next.js, React, TypeScript, and Tailwind CSS. This repository is currently initialized with a minimal application foundation; Wanderlust Explorer features and UI have not yet been implemented.
+A travel exploration project built with Next.js, React, TypeScript, and Tailwind CSS. Explore a curated local collection of 100 experiences, search and filter by title/category/destination, open detailed pages, and save favorites in shared in-memory React state.
 
 ## Tech stack
 
@@ -64,3 +64,5 @@ npm run validate:data
 ```
 
 See [SPECS.md](./SPECS.md) for the official assignment requirements matrix and current completion status.
+
+Favorites are intentionally not persisted and reset on a full page refresh. See `SPECS.md` for the state architecture and behavior contracts.

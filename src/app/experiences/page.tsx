@@ -1,13 +1,10 @@
-import { RoutePlaceholder } from "@/components/route-placeholder";
+import { Suspense } from "react";
+import { Explorer } from "@/components/explorer";
 
 export default function ExperiencesPage() {
   return (
-    <main>
-      <RoutePlaceholder
-        eyebrow="The collection"
-        title="Explore experiences"
-        description="The local experience collection and discovery tools will be introduced here in the next implementation block."
-      />
-    </main>
+    <Suspense fallback={<main className="mx-auto min-h-[60vh] max-w-7xl px-5 py-14 sm:px-8">Loading experiences…</main>}>
+      <Explorer />
+    </Suspense>
   );
 }

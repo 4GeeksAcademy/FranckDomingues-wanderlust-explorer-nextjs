@@ -1,13 +1,6 @@
-import { RoutePlaceholder } from "@/components/route-placeholder";
+import { PageContainer } from "@/components/page-container";
+import { ProfileSummary } from "@/components/profile-summary";
 
 export default function ProfilePage() {
-  return (
-    <main>
-      <RoutePlaceholder
-        eyebrow="Your travel space"
-        title="Profile"
-        description="A lightweight profile page shell is ready. Account services and profile features remain outside this architecture block."
-      />
-    </main>
-  );
+  return <main><PageContainer><ProfileSummary /></PageContainer></main>;
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/navbar";
+import { SharedAppShell } from "@/components/shared-app-shell";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,8 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-stone-50 text-stone-900 antialiased">
-        <Navbar />
-        {children}
+        <SharedAppShell>{children}</SharedAppShell>
       </body>
     </html>
   );

@@ -2,7 +2,7 @@
 
 ## Project objective
 
-Wanderlust Explorer is a travel discovery application intended to help people explore a curated local collection of 100 experiences, search by experience title, filter by category and destination, view experience details, save favorites, and visit a simulated user profile with a saved-favorites count. This block establishes architecture, deterministic local data, and route shells; interactive behavior is pending.
+Wanderlust Explorer is a travel discovery application intended to help people explore a curated local collection of 100 experiences, search by experience title, filter by category and destination, view experience details, save favorites, and visit a simulated user profile with a saved-favorites count. The core Explorer, shared favorites behavior, and primary route experiences are now interactive; final visual QA and polish remain future work.
 
 ## Design discovery and visual direction
 
@@ -23,18 +23,18 @@ References were reviewed as sources of general interaction principles, not templ
 
 ## Routes
 
-- `/` — eventual home hero with a button to `/experiences`; currently an introduction shell, not final hero/sections.
-- `/experiences` — eventual explorer with all 100 experiences, title search, independent category/destination filters, composed filtering, and grid; currently a route shell.
-- `/experiences/[id]` — read the URL ID and find/display its record from `src/data/experiences.ts`; currently only demonstrates receipt of the route parameter.
-- `/favorites` — eventually display only experiences selected in shared React state; current route is not functional Favorites.
-- `/profile` — eventual static simulated user profile and live favorites count; current route does not provide the count.
+- `/` — focused editorial hero and CTA to `/experiences`.
+- `/experiences` — all 100 experiences with title regex search, independent category/destination filters, composed filtering, and shareable query state.
+- `/experiences/[id]` — looks up and displays its record from `src/data/experiences.ts`; unknown IDs use the Next.js not-found route.
+- `/favorites` — derives selected records from shared favorites IDs and the canonical dataset.
+- `/profile` — static simulated user profile with the live shared favorites count.
 
 ## Architecture and rendering boundaries
 
 - `src/app` — route segments, layouts, metadata, and global styles. Keep route shells and static content as Server Components by default.
-- `src/components` — shared presentation primitives. `Navbar`, `PageContainer`, and `RoutePlaceholder` are currently Server Components. Required final components include `ExperienceCard`, `SearchBar`, and `FilterBar` in addition to `Navbar`. Interactive filters, favorite toggles, and active navigation need narrowly scoped Client Components (`"use client"`) only where browser interaction is required.
+- `src/components` — `PageContainer` remains a Server Component. The `SharedAppShell` client boundary owns shared favorites state at the application level and composes `Navbar`; `Explorer`, `ExperienceCard`, SearchBar, FilterBar, favorite controls, and profile/favorites consumers use client boundaries only where hooks/interaction are required. Home and detail route composition remain Server Components where possible.
 - `src/data` — local typed data and development validation; no runtime network calls.
-- `src/hooks` — reusable hooks only when a real state or browser lifecycle concern is implemented; currently no artificial hook exists.
+- `src/hooks` — `useExperiences` derives matching records from input data and filters, including guarded regex handling.
 - `src/types` — canonical shared domain contracts, including `Experience`.
 
 No root-level `"use client"` boundary should be added merely for convenience. Shared React favorites state can be placed in a narrow client provider around the routes needing it, with server-rendered layout/presentation retained where possible.
@@ -68,15 +68,16 @@ Categories are exactly the literal union `Adventure | Culture | Food | Wellness 
 
 ## State ownership and favorites contract
 
-- Interactive discovery state should live at the narrowest shared React boundary needed by the route and controls. Use React state; do not add Redux or Zustand.
-- Favorites are represented as an array/set of canonical experience ID strings, owned by a React client provider or page-level state once favorites are implemented. Toggle means add an absent ID or remove a present ID, without mutating prior state.
-- Pass favorite IDs/count and toggle callbacks through typed props to interactive consumers. Navbar currently offers an optional typed `favoriteCount` prop; it renders no fabricated value when not supplied.
-- The navbar count reflects selected IDs (ideally only currently known dataset IDs). `/favorites` derives its list from those IDs and the canonical dataset.
+- Shared owner: `FavoritesStateProvider` in `src/components/favorites-state.tsx` is composed once by `SharedAppShell` in the root layout. Its native `useState<string[]>` is the only favorites source of truth; the context exposes IDs, count, `isFavorite`, and `toggleFavorite` to composition components.
+- Cards receive favorite state and toggle callbacks through typed props; detail favorite action, Navbar, Favorites, and Profile consume the same shared state. `/favorites` derives its records from IDs and the canonical dataset.
+- Favorites intentionally reset on a full page refresh; there is no persistence.
 - No persistence is specified by the provided assignment text: state is expected to reset after refresh. Do not add localStorage unless official requirements explicitly change this contract.
 
 ## Search contract
 
 Search applies only to `experience.title` and must use case-insensitive regular-expression behavior equivalent to `new RegExp(term, "i").test(experience.title)`. Preserve the raw regex requirement. Guard RegExp construction and matching with `try/catch`; invalid patterns must safely become no matches or a validation state without crashing the UI.
+
+The Explorer shows a clear validation status and zero results for an invalid regex; it does not crash and does not silently switch to substring search.
 
 ## Filters and URL contract
 
@@ -84,15 +85,15 @@ Canonical `/experiences` query keys are:
 
 - `search` — search term
 - `category` — lowercase URL slug for one category (for example, `adventure`); parse it case-insensitively and map it to the title-case `ExperienceCategory` value (`Adventure`) for controls/filtering. Serialize category selections back to the lowercase slug.
-- `destination` — selected destination display string
+- `destination` — selected city/country string or a country derived from the dataset (for example, `Croatia`)
 
-Compose active search, category, and destination constraints with logical AND; each unset constraint is a no-op. Reset clears all three and returns the URL to `/experiences` without empty/default parameters. Use Next.js `useSearchParams` and `usePathname` for client-side hydration and synchronization. Existing query values prefill the controls on load, and changes keep the canonical keys in the URL so refresh/share reproduces criteria. Do not introduce aliases such as `q`, `city`, or `type`.
+Compose active search, category, and destination constraints with logical AND; each unset constraint is a no-op. Reset clears all three and returns the URL to `/experiences` without empty/default parameters. Use Next.js `useSearchParams`, `usePathname`, and `useRouter` for client-side synchronization without full page loads. Existing query values prefill the controls on load, and changes keep the canonical keys in the URL so refresh/share reproduces criteria. Invalid category and destination values are ignored safely; unknown query keys in a deep link are not reflected into controls/results and are dropped on the next filter update. Do not introduce aliases such as `q`, `city`, or `type`.
 
 ## Hooks
 
 - `useState` is required for shared/top-level favorite IDs and may own local control state.
-- The finished project must demonstrate at least one correctly implemented `useEffect` for a genuine lifecycle/synchronization concern. Do not add an artificial effect or use it merely to mirror derived values.
-- The finished project must include at least one meaningful custom hook, such as `useExperiences` or `useFilters`; do not create one merely to satisfy a checklist.
+- `Explorer` uses `useEffect` to synchronize in-memory controls when browser navigation changes query parameters; it depends on the serialized query and does not write the URL from that effect, avoiding a feedback loop.
+- `useExperiences` is a meaningful memoized derivation hook for regex/title/category/destination filtering and malformed regex state.
 
 ## Responsive behavior
 
@@ -103,7 +104,7 @@ Compose active search, category, and destination constraints with logical AND; e
 
 ## Accessibility baseline
 
-Use semantic landmarks and heading order; `Link` for navigation and `button` for actions; explicit accessible names/labels for controls; descriptive image alternatives (empty alt only for genuinely decorative imagery); visible keyboard focus; keyboard-operable navigation and controls; sufficient text/interactive contrast; appropriately sized interaction targets; and communicate validation/errors without relying on color alone. Navbar must appear on every route and eventually indicate its active link using `usePathname`. A zero-result state must show exactly `No se encontraron resultados`.
+Use semantic landmarks and heading order; `Link` for navigation and `button` for actions; explicit accessible names/labels for controls; descriptive image alternatives (empty alt only for genuinely decorative imagery); visible keyboard focus; keyboard-operable navigation and controls; sufficient text/interactive contrast; appropriately sized interaction targets; and communicate validation/errors without relying on color alone. Navbar appears on every route and indicates the active link using `usePathname`, including nested detail routes. A zero-result state shows exactly `No se encontraron resultados`.
 
 ## Non-goals
 
@@ -111,7 +112,7 @@ Unless an official assignment document later requires otherwise, this project do
 
 ## Scope of this block
 
-Implemented now: project contract, visual direction, canonical type, local dataset and validation, shared navigation/container/placeholder components, global baseline, and route shells. Not implemented now: finished home sections, explorer interactions/search/filter URL synchronization, favorites provider or toggles, final cards/detail, final favorites/profile, and full responsive polish.
+Implemented now: project contract, visual direction, canonical type, local dataset and validation, shared favorites owner, active navigation, interactive Explorer/search/filters/URL synchronization, cards, home hero, detail, Favorites, and simulated Profile. Remaining: final visual QA/polish, deep manual responsive/browser QA, and any requirements beyond the 36-item checklist.
 
 ## Official Assignment Requirements
 
@@ -128,37 +129,37 @@ Statuses apply to the repository as of this audit: **DONE** is verified, **PARTI
 | REQ-007 | Restrict categories to Adventure, Culture, Food, Wellness, Nature. | DONE |
 | REQ-008 | Keep dataset deterministic/local without runtime travel API. | DONE |
 | REQ-009 | Validate record count, IDs, required fields, category, numbers, image URL, and city/country destination. | DONE |
-| REQ-010 | Provide the `/` home route. | PARTIAL |
-| REQ-011 | Present the home hero section. | PENDING |
-| REQ-012 | Provide a home button navigating to `/experiences`. | PARTIAL |
-| REQ-013 | Provide the `/experiences` route. | PARTIAL |
-| REQ-014 | Display all 100 experiences in a grid. | PENDING |
-| REQ-015 | Search titles with case-insensitive RegExp semantics. | PENDING |
-| REQ-016 | Handle invalid RegExp input without crashing. | PENDING |
-| REQ-017 | Filter independently by category. | PENDING |
-| REQ-018 | Filter independently by destination. | PENDING |
-| REQ-019 | Compose search, category, and destination filters. | PENDING |
-| REQ-020 | Support canonical `search`, `category`, and `destination` query keys. | PARTIAL |
-| REQ-021 | Use `useSearchParams` and `usePathname` for query/control synchronization. | PENDING |
-| REQ-022 | Prefill controls from current URL query parameters. | PENDING |
-| REQ-023 | Provide `/experiences/[id]` and resolve/display the matching dataset record. | PARTIAL |
-| REQ-024 | Provide `/favorites` displaying only favorited experiences. | PARTIAL |
-| REQ-025 | Own favorite IDs in shared/top-level native React `useState`. | PENDING |
-| REQ-026 | Pass favorites state/data down through props where needed. | PARTIAL |
-| REQ-027 | Toggle favorites from each experience card heart control. | PENDING |
-| REQ-028 | Visually distinguish active and inactive favorite controls. | PENDING |
-| REQ-029 | Show a static simulated profile at `/profile`. | PARTIAL |
-| REQ-030 | Display the shared favorites count on Profile. | PENDING |
-| REQ-031 | Include the required `ExperienceCard` component. | PENDING |
-| REQ-032 | Include required `SearchBar` and `FilterBar` components. | PENDING |
-| REQ-033 | Show Navbar on every route and style active links with `usePathname`. | PARTIAL |
-| REQ-034 | Show `No se encontraron resultados` for zero results. | PENDING |
-| REQ-035 | Demonstrate meaningful `useState`, correct `useEffect`, and custom hook. | PENDING |
-| REQ-036 | Deliver coherent responsive mobile and desktop behavior across pages. | PENDING |
+| REQ-010 | Provide the `/` home route. | DONE |
+| REQ-011 | Present the home hero section. | DONE |
+| REQ-012 | Provide a home button navigating to `/experiences`. | DONE |
+| REQ-013 | Provide the `/experiences` route. | DONE |
+| REQ-014 | Display all 100 experiences in a grid. | DONE |
+| REQ-015 | Search titles with case-insensitive RegExp semantics. | DONE |
+| REQ-016 | Handle invalid RegExp input without crashing. | DONE |
+| REQ-017 | Filter independently by category. | DONE |
+| REQ-018 | Filter independently by destination. | DONE |
+| REQ-019 | Compose search, category, and destination filters. | DONE |
+| REQ-020 | Support canonical `search`, `category`, and `destination` query keys. | DONE |
+| REQ-021 | Use `useSearchParams` and `usePathname` for query/control synchronization. | DONE |
+| REQ-022 | Prefill controls from current URL query parameters. | DONE |
+| REQ-023 | Provide `/experiences/[id]` and resolve/display the matching dataset record. | DONE |
+| REQ-024 | Provide `/favorites` displaying only favorited experiences. | DONE |
+| REQ-025 | Own favorite IDs in shared/top-level native React `useState`. | DONE |
+| REQ-026 | Pass favorites state/data down through props where needed. | DONE |
+| REQ-027 | Toggle favorites from each experience card heart control. | DONE |
+| REQ-028 | Visually distinguish active and inactive favorite controls. | DONE |
+| REQ-029 | Show a static simulated profile at `/profile`. | DONE |
+| REQ-030 | Display the shared favorites count on Profile. | DONE |
+| REQ-031 | Include the required `ExperienceCard` component. | DONE |
+| REQ-032 | Include required `SearchBar` and `FilterBar` components. | DONE |
+| REQ-033 | Show Navbar on every route and style active links with `usePathname`. | DONE |
+| REQ-034 | Show `No se encontraron resultados` for zero results. | DONE |
+| REQ-035 | Demonstrate meaningful `useState`, correct `useEffect`, and custom hook. | DONE |
+| REQ-036 | Deliver coherent responsive mobile and desktop behavior across pages. | PARTIAL |
 
 ## Definition of Done
 
-For this architecture block, done means: all five route structures exist; one canonical experience type and an exactly 100-record local collection conform to official fields/categories; validation passes; architecture avoids unnecessary client boundaries and prohibited state libraries/persistence; design references and the requirements matrix are documented; and lint, typecheck, production build, and data validation pass. Interactive behavior and final UX remain pending according to the matrix.
+For the interactive implementation block, done means the 36-item matrix is updated from observed behavior; all routes and core search/filter/favorites functionality work with the canonical data; no prohibited state/persistence dependency is introduced; and dataset validation, lint, typecheck, production build, manual behavior checks, and responsive baseline QA pass. Final visual polish is tracked separately.
 
 ## Local development and checks
 
